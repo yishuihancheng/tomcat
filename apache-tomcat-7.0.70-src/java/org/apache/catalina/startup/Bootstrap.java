@@ -121,6 +121,7 @@ public final class Bootstrap {
                 // Ignore
             }
 
+            // 本地仓库
             // Local repository
             if (repository.endsWith("*.jar")) {
                 repository = repository.substring

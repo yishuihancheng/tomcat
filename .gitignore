@@ -4645,4 +4645,5 @@ WsWriteTimeout.java
 pom.properties
 createdFiles.lst
 inputFiles.lst
-.idea
+apache-tomcat-7.0.70-src/.idea
+apache-tomcat-7.0.70-src/target

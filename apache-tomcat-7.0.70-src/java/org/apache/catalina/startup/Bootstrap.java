@@ -17,6 +17,7 @@
 package org.apache.catalina.startup;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -92,6 +93,14 @@ public final class Bootstrap {
     }
 
 
+    /**
+     * 先从属性文件中读取classLoader的值，如果没有，则用parent classLoader，有的话肯定直接用，与jdk中的双亲委托机制不同
+     *
+     * @param name
+     * @param parent
+     * @return
+     * @throws Exception
+     */
     private ClassLoader createClassLoader(String name, ClassLoader parent)
         throws Exception {
 
@@ -99,6 +108,10 @@ public final class Bootstrap {
         if ((value == null) || (value.equals("")))
             return parent;
 
+        /**
+         * 以common属性的classLoader为例讲解，
+         * common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+         */
         value = replace(value);
 
         List<Repository> repositories = new ArrayList<Repository>();
@@ -463,8 +476,14 @@ public final class Bootstrap {
     /**
      * Set the <code>catalina.base</code> System property to the current
      * working directory if it has not been set.
+     * 如果catalina.base属性存在，那么不处理
+     * 如果不存在，设为catalina.home属性
+     * 如果catalina.home属性都不存在，那么直接设置为工作路径
      */
     private void setCatalinaBase() {
+
+        // 测试代码
+        System.out.println(System.getProperty(Globals.CATALINA_BASE_PROP));
 
         if (System.getProperty(Globals.CATALINA_BASE_PROP) != null)
             return;
@@ -481,8 +500,20 @@ public final class Bootstrap {
     /**
      * Set the <code>catalina.home</code> System property to the current
      * working directory if it has not been set.
+     *
+     * 设置属性，读取bootstrap.jar文件，如果文件存在，那么设置catalina.home 属性为
      */
     private void setCatalinaHome() {
+
+        // 测试user.dir路径
+        System.out.println(System.getProperty("user.dir"));
+        try {
+            System.out.println((new File(System.getProperty("user.dir"), "..")).getCanonicalPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(System.getProperty(Globals.CATALINA_HOME_PROP));
+
 
         if (System.getProperty(Globals.CATALINA_HOME_PROP) != null)
             return;

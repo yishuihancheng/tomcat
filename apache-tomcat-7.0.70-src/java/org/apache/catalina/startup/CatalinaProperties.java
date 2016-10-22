@@ -30,8 +30,9 @@ import org.apache.catalina.Globals;
 
 
 /**
+ * Read by tlzhang @2016-10-23
  * Utility class to read the bootstrap Catalina configuration.
- *
+ * 加载Catalina配置额累
  * @author Remy Maucherat
  */
 
@@ -84,6 +85,13 @@ public class CatalinaProperties {
 
     /**
      * Load properties.
+     * 1.先从System中获取catalina.config属性，是一个url
+     * 2.通过url读取数据流
+     * 3. 如果从url创建的输入流失败，那么进行4（也就是先从设置中的读取，读不到再创建）
+     * 4. 创建home文件夹，通过home文件夹创建conf文件夹，在创建catalina.properties文件
+     * 5. 创建输入流is成功后，讲属性读入Properties里面
+     * 6. 如果经过以上步骤，输入流还是没有创建成功，那么创建一个properties对象
+     * 7. 最终将所有的属性，写入到系统属性中，或者叫注册到系统属性中，键值即为属性的名称
      */
     private static void loadProperties() {
 
@@ -182,6 +190,11 @@ public class CatalinaProperties {
     }
 
     // Copied from ExceptionUtils since that class is not visible during start
+
+    /**
+     * 处理异常，对特殊的两个异常进行处理
+     * @param t
+     */
     private static void handleThrowable(Throwable t) {
         if (t instanceof ThreadDeath) {
             throw (ThreadDeath) t;

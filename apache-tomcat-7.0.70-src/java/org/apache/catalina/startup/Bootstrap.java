@@ -111,6 +111,11 @@ public final class Bootstrap {
         /**
          * 以common属性的classLoader为例讲解，
          * common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+         * 把这个common.loader 替换为全路径，路径为字符串，中间用“，”隔开
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib,
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar,
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib,
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar
          */
         value = replace(value);
 

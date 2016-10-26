@@ -22,6 +22,7 @@ package org.apache.catalina.security;
  * Static class used to preload java classes when using the
  * Java SecurityManager so that the defineClassInPackage
  * RuntimePermission does not trigger an AccessControlException.
+ * 用于加载java类，不用进行权限检查，因为classLoader是由高权限的代码创建出来的
  *
  * @author Glenn L. Nielsen
  * @author Jean-Francois Arcand

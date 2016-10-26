@@ -240,6 +240,15 @@ public final class ClassLoaderFactory {
                 });
     }
 
+    /**
+     * 对文件或者文件夹进行验证
+     * 如果file是文件夹或者GLOB文件，那么他必须存在，且是文件夹且可以读，否则返回false，此时在base文件夹下创建lib文件夹
+     * 如果file是jar文件，那么这个文件必须存在并且可读，否则返回false
+     * @param file 要验证的文件
+     * @param type Flie 类型
+     * @return
+     * @throws IOException
+     */
     private static boolean validateFile(File file,
             RepositoryType type) throws IOException {
         if (RepositoryType.DIR == type || RepositoryType.GLOB == type) {

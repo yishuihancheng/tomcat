@@ -16,6 +16,8 @@
  */
 package org.apache.tomcat.util.res;
 
+import sun.reflect.Reflection;
+
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -30,6 +32,11 @@ import java.util.ResourceBundle;
  * the bother of handling ResourceBundles and takes care of the
  * common cases of message formating which otherwise require the
  * creation of Object arrays and such.
+ *
+ * 这个类存储了所有包的StringManage 用 managers存储，
+ * 存储的数据结构Map<String, Map<Local, StringManager>>存储，与ThreadLocal 有异曲同工之妙
+ *
+ * 可以参见http://www.cnblogs.com/chenying99/archive/2012/09/05/2671204.html
  *
  * <p>The StringManager operates on a package basis. One StringManager
  * per package can be created and accessed via the getManager method
@@ -66,9 +73,19 @@ public class StringManager {
      * static getManager method call so that only one StringManager
      * per package will be created.
      *
+     * 正常情况下是使用调用者的classLoader
+     * 如果出现异常使用contextClassLoader，是系统默认的类装载器？也就是ApplicationSystemClassLoader
+     *
      * @param packageName Name of package to create StringManager for.
      */
     private StringManager(String packageName, Locale locale) {
+        /**
+         * 测试代码，测试classLoader 和 getContextClassLoader
+         */
+//        System.out.println(Reflection.getCallerClass().toString());
+//        System.out.println(getClass().getClassLoader().toString());
+//        System.out.println(Thread.currentThread().getContextClassLoader().toString());
+
         String bundleName = packageName + ".LocalStrings";
         ResourceBundle bnd = null;
         try {
@@ -218,6 +235,13 @@ public class StringManager {
      * Get the StringManager for a particular package and Locale. If a manager
      * for a package/Locale combination already exists, it will be reused, else
      * a new StringManager will be created and returned.
+     * 获取包的manager 这个manager是从一个map读取到的
+     * 此map为managers key值为包名，value为 Map<Locale,StringManager>
+     * 如果有了 直接创建，如果没有，那么服用
+     *
+     * 对于每个包的StringManager， 使用一个map存着数据
+     * 这个数据结构为LinkedHashMap，最大容量为LOCALE_CACHE_SIZE，
+     * 当插入一个数据后，要进行检查，如果是最大容量，则删除一条记录，重写了removeEldestEntry
      *
      * @param packageName The package name
      * @param locale      The Locale

@@ -76,9 +76,20 @@ public final class Bootstrap {
     // -------------------------------------------------------- Private Methods
 
 
+    /**
+     * 初始化classLoader
+     * 有三个classLoader common server shared
+     * 默认中server 与 shared ClassLoader 在配置文件中为空，默认使用common ClassLoader
+     */
     private void initClassLoaders() {
         try {
+            /**
+             *
+             */
             commonLoader = createClassLoader("common", null);
+            /**
+             * 通过上面的步骤创建不了类装载器，进行下面的装载器，也就是使用默认的类装载器
+             */
             if( commonLoader == null ) {
                 // no config file, default to this loader - we might be in a 'single' env.
                 commonLoader=this.getClass().getClassLoader();
@@ -113,9 +124,9 @@ public final class Bootstrap {
          * common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
          * 把这个common.loader 替换为全路径，路径为字符串，中间用“，”隔开
          * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib,
-         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar,
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar, GLOB
          * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib,
-         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar
+         * E:\OpenCode\tomcat\apache-tomcat-7.0.70-src\lunch/lib/*.jar GLOB
          */
         value = replace(value);
 
@@ -219,11 +230,14 @@ public final class Bootstrap {
 
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
+        // 调用catalinaLoader去加载java类，此时采用的是特权模式
         SecurityClassLoad.securityClassLoad(catalinaLoader);
 
         // Load our startup class and call its process() method
         if (log.isDebugEnabled())
             log.debug("Loading startup class");
+
+        // 用catalinaLoader去装在Catalina类
         Class<?> startupClass =
             catalinaLoader.loadClass
             ("org.apache.catalina.startup.Catalina");

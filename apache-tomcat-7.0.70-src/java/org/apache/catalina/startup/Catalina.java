@@ -49,6 +49,7 @@ import org.xml.sax.SAXParseException;
 
 
 /**
+ *
  * Startup/Shutdown shell program for Catalina.  The following command line
  * options are recognized:
  * <ul>
@@ -65,6 +66,7 @@ import org.xml.sax.SAXParseException;
  *
  * Should do the same thing as Embedded, but using a server.xml file.
  *
+ * 这个类是由catalinaLoader类装载器装载的
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  */

@@ -16,6 +16,7 @@
  */
 package org.apache.tomcat.util.res;
 
+import org.apache.catalina.startup.Catalina;
 import sun.reflect.Reflection;
 
 import java.text.MessageFormat;
@@ -82,9 +83,11 @@ public class StringManager {
         /**
          * 测试代码，测试classLoader 和 getContextClassLoader
          */
+        // Reflection.getCallerClass(1)当前方法所在类的信息
 //        System.out.println(Reflection.getCallerClass().toString());
-//        System.out.println(getClass().getClassLoader().toString());
-//        System.out.println(Thread.currentThread().getContextClassLoader().toString());
+        System.out.println(getClass().getClassLoader().toString());
+        System.out.println(String.class.getClassLoader());
+        System.out.println(Thread.currentThread().getContextClassLoader().toString());
 
         String bundleName = packageName + ".LocalStrings";
         ResourceBundle bnd = null;

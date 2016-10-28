@@ -242,6 +242,10 @@ public final class Bootstrap {
             catalinaLoader.loadClass
             ("org.apache.catalina.startup.Catalina");
         Object startupInstance = startupClass.newInstance();
+        /**
+         * 测试代码
+         */
+        log.info(startupInstance.getClass().getClassLoader());
 
         // Set the shared extensions class loader
         if (log.isDebugEnabled())

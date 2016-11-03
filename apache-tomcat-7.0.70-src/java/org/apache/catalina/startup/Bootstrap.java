@@ -96,6 +96,12 @@ public final class Bootstrap {
             }
             catalinaLoader = createClassLoader("server", commonLoader);
             sharedLoader = createClassLoader("shared", commonLoader);
+
+            /**
+             * 测试代码，查看catalinaLoader 与 sharedLoader 的parent loader是什么
+             */
+//            log.info("catalinaLoade's  parent ClassLoader is " + catalinaLoader.getParent());
+//            log.info("sharedLoader's  parent ClassLoader is " + sharedLoader.getParent());
         } catch (Throwable t) {
             handleThrowable(t);
             log.error("Class loader creation threw exception", t);

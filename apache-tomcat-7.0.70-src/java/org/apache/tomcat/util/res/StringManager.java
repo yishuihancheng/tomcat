@@ -76,6 +76,7 @@ public class StringManager {
      *
      * 正常情况下是使用调用者的classLoader
      * 如果出现异常使用contextClassLoader，是系统默认的类装载器？也就是ApplicationSystemClassLoader
+     * 默认的ClassLoader的类装载器都是App装载器，在URLClassLoader里面设置的装载器parent 默认是AppClassLoader
      *
      * @param packageName Name of package to create StringManager for.
      */

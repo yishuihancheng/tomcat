@@ -263,7 +263,33 @@ public final class Bootstrap {
         paramValues[0] = sharedLoader;
         Method method =
             startupInstance.getClass().getMethod(methodName, paramTypes);
+
+        /**
+         * 测试代码,某一次的测试结果如下
+         * Catalina's ClassLoader issun.misc.Launcher$AppClassLoader@18b4aac2
+         java.lang.ClassLoader's ClassLoader is null
+         sharedLoader's parent is sun.misc.Launcher$AppClassLoader@18b4aac2
+         sharedLoader's ClassLoader is null
+         sharedLoader 是一个URLClassLoder对象，所以sharedLoader.getClass()是URLClassLoader而它的parent是BootStrap 加载器
+         */
+        System.out.println("Catalina's ClassLoader is" + startupInstance.getClass().getClassLoader());
+        System.out.println("java.lang.ClassLoader's ClassLoader is " + paramTypes[0].getClassLoader());
+        System.out.println("sharedLoader's parent is " + sharedLoader.getParent());
+        System.out.println("sharedLoader's ClassLoader is " + sharedLoader.getClass().getClassLoader());
+        // System.out.println("sharedLoader's ClassLoader's parent ClassLoader is " + sharedLoader.getClass().getClassLoader().getParent());
+        System.out.println("Before setParent's operation, startupInstance's parent ClassLoader is:" + startupInstance.getClass().getClassLoader());
+        System.out.println("Before setParent's operation, startupInstance's parent ClassLoader is:" + startupInstance.getClass().getClassLoader().getParent());
+
+        /**
+         * 强制设置Catalina的对象的附加在类为sharedLoader
+         */
         method.invoke(startupInstance, paramValues);
+
+        /**
+         * 测试代码，设置过parentClassLoader的后果
+         */
+        System.out.println("After setParent's operation, startupInstance's parent ClassLoader is:" + startupInstance.getClass().getClassLoader());
+        System.out.println("After setParent's operation, startupInstance's parent ClassLoader is:" + startupInstance.getClass().getClassLoader().getParent());
 
         catalinaDaemon = startupInstance;
 
@@ -272,6 +298,8 @@ public final class Bootstrap {
 
     /**
      * Load daemon.
+     * arguments 即是 main函数穿进去的参数
+     * 进而使catalinaDeamon调用相关的load函数加载参数
      */
     private void load(String[] arguments)
         throws Exception {
@@ -446,6 +474,7 @@ public final class Bootstrap {
             }
             daemon = bootstrap;
         } else {
+            // 注意是单例模式，这里暂时还没有看懂，先看开启的代码，再看关闭的代码 2016-11-04
             // When running as a service the call to stop will be on a new
             // thread so make sure the correct class loader is used to prevent
             // a range of class not found exceptions.
@@ -453,6 +482,9 @@ public final class Bootstrap {
         }
 
         try {
+            /**
+             * 如果main函数没有参数，那么命令是start
+             */
             String command = "start";
             if (args.length > 0) {
                 command = args[args.length - 1];
@@ -467,6 +499,11 @@ public final class Bootstrap {
                 daemon.stop();
             } else if (command.equals("start")) {
                 daemon.setAwait(true);
+                /**
+                 * 第一次运行，会执行下面的函数
+                 * 会调用Catalina.load(args)函数
+                 * 进而调用Catalina.load()函数进行一些初始化的操作，并不是什么也不做，即便是args为null
+                 */
                 daemon.load(args);
                 daemon.start();
             } else if (command.equals("stop")) {

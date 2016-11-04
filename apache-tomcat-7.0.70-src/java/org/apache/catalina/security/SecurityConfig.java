@@ -63,6 +63,12 @@ public final class SecurityConfig{
      */
     private SecurityConfig(){
         try{
+            /**
+             * package.definition=sun.,java.,org.apache.catalina.,org.apache.coyote.,\
+             org.apache.jasper.,org.apache.naming.,org.apache.tomcat.
+             * package.access=sun.,org.apache.catalina.,org.apache.coyote.,org.apache.jasper.,\
+             org.apache.naming.resources.,org.apache.tomcat.
+             */
             packageDefinition = CatalinaProperties.getProperty("package.definition");
             packageAccess = CatalinaProperties.getProperty("package.access");
         } catch (java.lang.Exception ex){
@@ -87,6 +93,7 @@ public final class SecurityConfig{
 
     /**
      * Set the security package.access value.
+     * 如果配置文件没有配置，那么使用tomcat代码中默认的配置
      */
     public void setPackageAccess(){
         // If catalina.properties is missing, protect all by default.
@@ -113,6 +120,7 @@ public final class SecurityConfig{
 
     /**
      * Set the proper security property
+     * 设置安全访问策略
      * @param properties the package.* property.
      */
     private final void setSecurityProperty(String properties, String packageList){

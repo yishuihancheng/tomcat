@@ -238,7 +238,7 @@ public class Catalina {
      * Process the specified command line arguments, and return
      * <code>true</code> if we should continue processing; otherwise
      * return <code>false</code>.
-     *
+     * 对传入的参数进行判断，如果能继续处理，返回true，否则返回false
      * @param args Command line arguments to process
      */
     protected boolean arguments(String args[]) {
@@ -250,6 +250,9 @@ public class Catalina {
             return (false);
         }
 
+        /**
+         * 注意-config fileName，这样这个isConfig就有用了
+         */
         for (int i = 0; i < args.length; i++) {
             if (isConfig) {
                 configFile = args[i];
@@ -257,6 +260,9 @@ public class Catalina {
             } else if (args[i].equals("-config")) {
                 isConfig = true;
             } else if (args[i].equals("-nonaming")) {
+                /**
+                 * 是否开启姓名服务
+                 */
                 setUseNaming( false );
             } else if (args[i].equals("-help")) {
                 usage();
@@ -799,8 +805,14 @@ public class Catalina {
     }
 
 
+    /**
+     * CatalinaHome和CatalinaBase 路径的初始化和转换
+     */
     protected void initDirs() {
 
+        /**
+         * 设置catalinaHome，这已经在Bootstrap.setCatalinaHome和Bootstrap.setCatalinaBase中已经设置过了，这里进行二次校验
+         */
         String catalinaHome = System.getProperty(Globals.CATALINA_HOME_PROP);
         if (catalinaHome == null) {
             // Backwards compatibility patch for J2EE RI 1.3
@@ -817,8 +829,14 @@ public class Catalina {
         }
         if (catalinaHome != null) {
             File home = new File(catalinaHome);
+            /**
+             * 检查是否为绝对路径
+             */
             if (!home.isAbsolute()) {
                 try {
+                    /**
+                     * 参见http://handd.blog.51cto.com/2796632/1173823/
+                     */
                     catalinaHome = home.getCanonicalPath();
                 } catch (IOException e) {
                     catalinaHome = home.getAbsolutePath();
@@ -890,7 +908,8 @@ public class Catalina {
 
 
     /**
-     * Set the security package access/protection.
+     * Set the security package access/protection
+     * 设置两个访问权限.
      */
     protected void setSecurityProtection(){
         SecurityConfig securityConfig = SecurityConfig.newInstance();

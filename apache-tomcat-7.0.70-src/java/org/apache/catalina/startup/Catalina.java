@@ -544,6 +544,7 @@ public class Catalina {
 
     /**
      * Start a new server instance.
+     * 从server.xml读取配置信息
      */
     public void load() {
 
@@ -571,6 +572,8 @@ public class Catalina {
                     log.debug(sm.getString("catalina.configFail", file), e);
                 }
             }
+
+            // 换一种加载文件的方式
             if (inputStream == null) {
                 try {
                     inputStream = getClass().getClassLoader()
@@ -588,6 +591,7 @@ public class Catalina {
 
             // This should be included in catalina.jar
             // Alternative: don't bother with xml, just create it manually.
+            // 如果还没有找到配置文件，再次加载默认的文件
             if( inputStream==null ) {
                 try {
                     inputStream = getClass().getClassLoader()
@@ -797,10 +801,10 @@ public class Catalina {
     protected void usage() {
 
         System.out.println
-            ("usage: java org.apache.catalina.startup.Catalina"
-             + " [ -config {pathname} ]"
-             + " [ -nonaming ] "
-             + " { -help | start | stop }");
+                ("usage: java org.apache.catalina.startup.Catalina"
+                        + " [ -config {pathname} ]"
+                        + " [ -nonaming ] "
+                        + " { -help | start | stop }");
 
     }
 
@@ -877,6 +881,10 @@ public class Catalina {
     }
 
 
+    /**
+     * 初始化命名空间，为两个值进行命名
+     * 分别是javax.naming.Context.URL_PKG_PREFIXES和javax.naming.Context.INITIAL_CONTEXT_FACTORY
+     */
     protected void initNaming() {
         // Setting additional variables
         if (!useNaming) {
